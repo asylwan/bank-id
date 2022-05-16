@@ -49,10 +49,11 @@ class BankIDService
 
     /**
      * @param string|null $personalNumber The personal number of the user. String. 12 digits. Century must be included.
+     * @param array $customParameters Custom parameters that are merged with the default JSON parameters in the POST request.
      * @return OrderResponse
      * @throws ClientException
      */
-    public function getAuthResponse($personalNumber = null)
+    public function getAuthResponse($personalNumber = null, $customParameters = [])
     {
         $parameters = [
             'endUserIp'      => $this->endUserIp,
@@ -62,6 +63,9 @@ class BankIDService
         ];
         if ($personalNumber) {
             $parameters['personalNumber'] = $personalNumber;
+        }
+        if ($customParameters) {
+            $parameters = array_merge_recursive($parameters, $customParameters);
         }
 
         $responseData = $this->client->post('auth', ['json' => $parameters]);
